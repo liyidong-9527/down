@@ -21,6 +21,7 @@ class Resource(models.Model):
     download_num = models.CharField(max_length=20, help_text="下载次数", default=0)
 
     class Meta:
+        
         db_table = "resource"
 
 
