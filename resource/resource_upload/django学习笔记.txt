@@ -1,0 +1,47 @@
+js选择图片并显示
+	input type = file value="" id=files
+	img src=""
+	
+	$("#files").change(function(){
+		$("img").attr（“src”, URL.createObjectURL($(this)[0].files[0]）
+	
+	
+	})
+django 建立事务环境的两种方式
+	1、引入transaction使用装饰器建立事务环境
+	2、在settings配置中建立事务环境，ATOMIC_REQUESTS:True
+	
+
+redis数据库启动方式：net start redis
+		redis-server :关闭命令行提示窗口，redis就会停止
+连接redis数据库
+	redis-cli
+	
+Django关系模型只公开(和文档)OneToOnefield，，，ForeignKey和ManyToManyfield，它对应于内部
+
+OneToOnefield->OneToOneRel
+ForeignKey->ManyToOneRel
+ManyToManyfield->ManyToManyRel
+
+HttpResponse支持流格式图片，可通过HttpResponse将数据库中的流文件传递到img标签src中显示图片
+
+创建ModelForm表单：
+1、应用下新建form.py
+from django.forms.models import ModelFrom
+2、创建类
+class UserForm(models.ModelForm):
+    # 和模型进行绑定
+    class Meta:
+        model = User
+        绑定字段两种方式：
+        fields = ["username", "password"]
+        # fields = "__all__"
+
+modelFrom表单作用：
+	
+	1、读取前台数据 u = UserFrom（request.POST,request.FILES）分别为读取数据与文件
+	2、做表单验证 if u.is_valid()
+				获取数据模型：user = u.instance
+				数据库插入数据 user.ave（）
+时间格式化：元组变为字符串：时间元组.strftime（格式化格式）
+	

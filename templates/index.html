@@ -1,0 +1,134 @@
+{% extends "templates.html" %}
+{% block title %}
+    首页
+{% endblock %}
+{% block css_js %}
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css"/>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+{% endblock %}
+{% block main %}
+    <!-- 登录弹出层 -->
+    <div class="cvs" style="display:none" id="cvs2_logon">
+        <div class="newModWin">
+            <div class="title">登录爱下下账号</div>
+            <div class="close" id="cvs2_close" onclick="close_win()">X</div>
+
+            <div class="logWin">
+                <form action="index" method="post">
+                    <input type="text" id="name" class="inp user" name="name" autocomplete="off" placeholder="请输入用户名"/>
+                    <input type="password" class="inp pass" id="pwd" name="password" autocomplete="off"
+                           placeholder="请输入密码"/>
+
+                    <a href="findpass.html" class="find_pass">忘记密码，立即找回</a>
+                    <input type="submit" id="sub_but" class="su_btn" value="登录"/>
+                    <a href="user/reg" class="reg">注册</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 网站头信息-->
+    <div id="nav">
+        <div id="search">
+            <input type="text" name="name" autocomplete="off"/><a class="search btn">搜索</a>
+        </div>
+
+        <div id="logon">
+            <div class="cons">
+                欢迎光临爱下下！
+            </div>
+            <div class="opers">
+
+                <a class="btn" href="upload.html">上传资料</a>
+
+            </div>
+        </div>
+
+        <div id="login">
+            {% if request.session.user %}
+                <img src="user/user/{{ id }}" alt="">
+            {% else %}
+                <a href="javascript:void(0)" id="login_but" onclick="showWin()">点击登录</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 网站主体 -->
+    <div id="main">
+        <!-- 定义一个条目-->
+        {% for foo in resource %}
+                <div class="pro">
+                    <div class="img">
+                        <img src="/static/images/{{ foo.ext }}.svg"/>
+                    </div>
+                    <div class="cs">
+                        <div class="up">
+                            <a href="detail/{{ foo.id }}">{{ foo.name }}</a>
+                        </div>
+                        <div class="down">
+                            上传者：{{ foo.user }} 上传时间：{{ foo.up_time}}
+                        </div>
+                    </div>
+                    <div class="arr">
+                        积分：<span>{{ foo.score }}</span>
+                    </div>
+                </div>
+        {% endfor %}
+
+
+
+
+
+        <div class="panigation">
+            <a>
+                <上一页
+            </a>
+            <a>1</a>
+            <a>2</a>
+            <a class="act">3</a>
+            <a>4</a>
+            <a>5</a>
+            <a>下一页></a>
+        </div>
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script>
+        function showWin() {
+            $("#cvs2_logon").show()
+        }
+
+        function close_win() {
+            $("#cvs2_logon").hide()
+        }
+
+        $(function () {
+            $("#sub_but").click(function () {
+                if ($("#name").val().length !== 0 && $("#pwd").val().length !== 0) {
+                    let name = $("#name").val();
+                    let password = $("#pwd").val();
+                    $.ajax({
+                        url: "user/login",
+                        data: {"username": name, "password": password},
+                        async: false,
+                        type: "post",
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data["status"] === 500) {
+                                alert("账户或密码错误")
+                            }
+                        }
+                    })
+                } else {
+                    alert("账户或密码不可为空")
+                }
+
+
+            })
+        })
+
+    </script>
+
+{% endblock %}

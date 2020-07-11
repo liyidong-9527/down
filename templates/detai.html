@@ -1,0 +1,195 @@
+{% extends "templates.html" %}
+
+
+{% block css_js %}
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css"/>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+{% endblock %}
+{% block title %}
+    详情
+{% endblock %}
+{% block main %}
+    <!-- 网站主体 -->
+    <div id="main">
+
+    <!-- 定义详细目录-->
+    <div id="detail">
+        <!-- 资源上传者信息 -->
+        <div class="res_author">
+            <img src="/user/user/{{ resource.user_id }}"/>
+            <span>{{ resource.user_name }}</span><br/>
+            <a class="gz" href="javascript:void(0)">关注</a>
+            <a href="javascript:void(0)">查看TA的更多资源</a>
+        </div>
+        <div class="res_det">
+            <!-- 资源信息 -->
+            <div class="title"> <!-- 主信息-->
+                <div class="img">
+                    <img src="/static/images/{{ resource.ext }}.svg"/>
+                </div>
+                <div class="cons">
+                    <div>
+                        <label>{{ resource.name }}</label>
+                    </div>
+                    <div>
+                        <label>{{ resource.time }} 上传大小：{{ resource.size|filesizeformat }}</label>
+                        {% for foo in resource.keyword %}
+                            <span>{{ foo }}</span>
+                        {% endfor %}
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="desc"> <!-- 信息描述-->
+                {{ resource.text }}
+            </div>
+            <div class="msg"> <!-- 评价信息-->
+                <span class="act">★</span>
+                <span class="act">★</span>
+                <span class="act">★</span>
+                <span class="act">★</span>
+                <span>★</span>
+            </div>
+            <div class="oper"> <!-- 下载操作-->
+                <span>所需积分：<b>{{ resource.score }}</b></span>
+                <span>下载次数：<b>{{ resource.down_num }}</b></span>
+                <span>
+						<a class="btn">下载</a>
+						<a class="btn" id="shoucang">收藏</a>
+					</span>
+            </div>
+        </div>
+
+    </div>
+    <div id="comment">
+        <div class="title" id="tit">
+            评论：<span>共有{{ num }}条</span>
+            <hr/>
+        </div>
+
+        <!--每一条评论 -->
+        {% for foo in comment %}
+            <div class="cons">
+                <div class="img">
+                    <img src="/user/user/{{ foo.id }}"/>
+                </div>
+                <div class="cmt">
+                    <div>
+                        <span class="author">{{ foo.name }}</span>
+                        <span class="timer">{{ foo.time |date:"Y-m-d H:i:s" }}</span>
+                        <span class="star">
+                            {% for star in foo.star %}
+                               <span class="act">★</span>
+                            {% endfor %}
+                            {% for w_star in foo.white_star %}
+                                <span>★</span>
+                            {% endfor %}
+
+                        </span>
+                    </div>
+
+                    <div class="msg">
+                        <dt>{{ foo.text }}</dt>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+
+
+        <!-- 开始评论-->
+        <div id="mycomments">
+            <div>
+                <span>我的评论</span>
+                <hr/>
+
+                <textarea id="com_text" placeholder="可以留下您的宝贵意见哟"></textarea>
+                <div id="star" class="star"> <!-- 评价信息-->
+                    <span n="1" class="act">★</span>
+                    <span n="2" class="act">★</span>
+                    <span n="3">★</span>
+                    <span n="4">★</span>
+                    <span n="5">★</span>
+                </div>
+                <a id="commentBtn" class="btn">评论</a>
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        $(function () {
+
+            function get_star(n) {
+                let span_text = "";
+                for (let i = 0; i < n; i++) {
+                    span_text += `<span class="act">★</span>`
+                }
+                for (let i = 0; i < (5 - n); i++) {
+                    span_text += `<span>★</span>`
+                }
+                return span_text
+            }
+
+            {#评论星级样式#}
+            $("#star").children("span").click(function () {
+                $(this).prevAll("span").attr("class", "act");
+                $(this).attr("class", "act");
+                $(this).nextAll("span").attr("class", "");
+            });
+            {#  加载评论  #}
+            $("#commentBtn").click(function () {
+                {#评论内容#}
+                let comment_text = $("#com_text").val();
+                {#评论星级#}
+                let star_num = $("#star").children("span.act").length;
+                let resource_id = window.document.URL.split("/")[4];
+                $.ajax({
+                    url: "/resource/comment",
+                    data: {"com_text": comment_text, "star": star_num, "id": resource_id},
+                    type: "post",
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        $("#tit").after(` <div class="cons">
+                                                <div class="img">
+                                                    <img src="/user/user/` + data["comment_user"] + `" />
+                                                </div>
+                                                <div class="cmt">
+                                                    <div>
+                                                        <span class="author">` + data["name"] + `</span>
+                                                        <span class="timer">` + data["time"] + `</span>
+                                                        <span class="star">` + get_star(data["star"]) + `</span>
+                                                    </div>
+
+                                                    <div class="msg">
+                                                        <dt>` + data["text"] + `</dt>
+                                                    </div>
+                                                </div>
+                                            </div>`)
+                    }
+                })
+            })
+            $("#shoucang").click(function () {
+               let resource_id = document.URL.split("/")[4];
+                $.ajax({
+                    url:"/resource/collect",
+                    data:{"resource_id": resource_id},
+                    type: "post",
+                    success:function (data) {
+                        data = JSON.parse(data);
+                        if (data["msg"] === 500){
+                            alert("已收藏")
+                        }else{
+                            alert("收藏成功")
+                        }
+                    }
+
+
+                })
+            })
+        })
+    </script>
+{% endblock %}

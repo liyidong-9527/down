@@ -1,0 +1,48 @@
+{% extends "templates.html" %}
+{% block title %}
+    密码找回
+{% endblock %}
+{% block css_js %}
+     <link rel="stylesheet" type="text/css" href="/static/css/index.css"/>
+{% endblock %}
+{% block main %}
+<!-- 网站主体 -->
+    <div id="main">
+        <!-- 上传表单-->
+        <div class="upload">
+            <p>密码找回</p>
+            <hr />
+            <form action="" method="post">
+                <span>
+                    <label>找回方式：</label>
+                    <select class="upt">
+                        <option selected="selected">邮件找回</option>
+						<option>电话找回</option>
+                    </select>
+                </span>
+				<span>
+                    <label>输入账号：</label>
+                    <input class="upt" type="text" name="" value="" />
+                </span>
+                <span>
+                    <label>输入邮件/电话：</label>
+                    <input class="upt" type="text" name="" value="" />
+                </span>
+				<!--
+					<span>
+						<label>新密码：</label>
+						<input class="upt" type="password" name="" value="" />
+						<b>密码长度为6-20位</b>
+					</span>
+					<span>
+						<label>确认密码：</label>
+						<input class="upt" type="password" name="" value="" />
+						<b>两次输入的密码必须保持一致</b>
+					</span>
+				-->
+                <span><label class="btn"><input type="button" value="确认找回" /></label></span>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}

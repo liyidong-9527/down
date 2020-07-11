@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css"/>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+    <title>用户注册</title>
+
+</head>
+<body>
+<div class="reg">
+    <span><label class="btn"><input id="reg" type="button" form="myform" value="下一步"/></label></span>
+</div>
+
+<!-- 网站主体 -->
+<div id="main">
+    <!-- 上传表单-->
+    <div class="upload reg2">
+
+        <!-- 注册步骤导航-->
+        <div class="reg_step">
+            <a class="step" href="./register.html">注册信息</a><a class="step2" href="./register2.html">基本信息</a><a
+                class="step2" href="./register3.html">注册完成</a>
+        </div>
+        <hr/>
+
+        <form action="reg2" id="myform" method="post">
+
+                <span>
+                    <label>用户名：</label>
+                    <input id="name" class="upt" type="text" name="username" value=""/>
+					<b id="uname"></b>
+                    <b>账号由字母，数字，下划线组成</b>
+                </span>
+            <span>
+                    <label>密码：</label>
+                    <input id="password" class="upt" type="password" name="password" value=""/>
+                    <b></b>
+                    <b>密码长度为6-20位</b>
+                </span>
+            <span>
+                    <label>确认密码：</label>
+                    <input id="confirmPass" class="upt" type="password" name="abd" value=""/>
+                    <b></b>
+                    <b>两次输入的密码必须保持一致</b>
+                </span>
+        </form>
+    </div>
+
+</div>
+
+</body>
+
+</html>
+<script>
+    $(function () {
+        {#标志字典，都为一时才可下一步#}
+        var sign = {"name": 0, "password": 0, "confirmPass": 0};
+        $("#name").focusout(function () {
+            let tag = $(this).next();
+            {#账户存在验证#}
+            $.ajax({
+                url: " check_user",
+                data: {"username": $(this).val()},
+                type: "post",
+                success: function (data) {
+                    data = JSON.parse(data);
+                    if (data["status"] === 500) {
+                        console.log($("#name").val());
+                        tag.html("账户已存在");
+                        tag.css("color", "red");
+                        sign["name"] = 0;
+                    } else {
+                        {#账户不可为空验证#}
+                        if ($("#name").val().length === 0) {
+                            tag.css("color", "red");
+                            tag.html("账户不能为空");
+                            sign["name"] = 0;
+                        } else {
+                            tag.html("");
+                            sign["name"] = 1;
+                        }
+                        {#账户格式验证#}
+                        test = /^[a-z0-9_-]{3,16}$/;
+                        let user_test = test.test($("#name").val());
+                        if (user_test) {
+                            tag.html("账户格式正确");
+                            tag.css("color", "green");
+                            sign["name"] = 1;
+                        } else {
+                            tag.html("账户格式不正确");
+                            tag.css("color", "red");
+                            sign["name"] = 0;
+                        }
+                    }
+                }
+            });
+        });
+        {#密码验证#}
+        $("#password").change(function () {
+            let tag = $(this).next();
+            {#密码是否为空验证#}
+            if ($(this).val().length === 0) {
+                tag.html("密码不可为空");
+                $(this).next().css("color", "red");
+                sign["password"] = 0;
+            } else {
+                tag.html("");
+                sign["password"] = 1;
+                if ($("#confirmPass").val() !== $(this).val) {
+                    $("#confirmPass").next().html("密码不一致");
+                    $("#confirmPass").next().css("color", "red");
+                    sign["confirmPass"] = 0;
+                }
+            }
+            {#密码长度验证#}
+            if ($(this).val().length > 5 && $(this).val().length < 21) {
+                tag.html("密码格式正确");
+                $(this).next().css("color", "green");
+                {#$("#confirmPass").attr("disabled", false);#}
+                sign["password"] = 1;
+            } else {
+                tag.html("密码格式不正确");
+                {#$("#confirmPass").attr("disabled", true);#}
+                $(this).next().css("color", "red");
+                sign["password"] = 0;
+            }
+        });
+        {#密码一致验证#}
+        $("#confirmPass").change(function () {
+
+            let tag = $(this).next();
+            if ($(this).val() === $("#password").val()) {
+                tag.html("密码一致");
+                tag.css("color", "green");
+                sign["confirmPass"] = 1;
+            } else {
+                tag.html("密码不一致");
+                tag.css("color", "red");
+                sign["confirmPass"] = 0;
+            }
+        });
+        {#提交验证#}
+        $(".upt").change(function () {
+            console.log(sign);
+            if (sign["name"] === 1 && sign["password"] === 1 && sign["confirmPass"] === 1) {
+                $("#reg").attr("disabled", false)
+
+            } else {
+                $("#reg").attr("disabled", true)
+            }
+        });
+        {#下一步按钮绑定点击动作#}
+        $("#reg").click(function () {
+            $("#myform").submit()
+        })
+    })
+
+
+</script>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css"/>
+	<script src="/static/js/jquery-3.2.1.min.js"></script>
+    <title>用户注册</title>
+
+</head>
+<body>
+
+	<div class="reg">
+		<span>
+			<label class="btn"><input id="reg" type="button" form="myform" value="下一步" /></label>
+			<!--
+			<label>
+				<a href="./register3.html">跳过该步骤</a>
+			</label>
+			-->
+		</span>
+	</div>
+
+  <!-- 网站主体 -->
+    <div id="main">
+        <!-- 上传表单-->
+        <div class="upload reg2">
+            <!-- 显示图片-->
+            <div id="show_photo"></div>
+            <!-- 注册步骤导航-->
+            <div class="reg_step">
+                <a class="step1" href="./register.html">注册信息</a><a class="step" href="./register2.html">基本信息</a><a
+                    class="step2" href="./register3.html">注册完成</a>
+            </div>
+            <hr/>
+
+
+            <form action="reg3" id="myform" method="post" enctype="multipart/form-data">
+                <span>
+                    <label>用户头像：</label>
+                    <input class="upt" type="text" readonly="readonly"/>
+                    <input class="upt" type="file" id="photo" name="photo" value=""/>
+                    <b>文件格式可以是jpg,gif,png等图片格式</b>
+                </span>
+                <span>
+                    <label>电子邮箱：</label>
+                    <input id="email" class="upt" type="text" name="email" value=""/>
+                    <b>您丢失密码后找回密码的凭证</b>
+                </span>
+                <span>
+                    <label>联系方式：</label>
+                    <input id="tel" class="upt" type="text" name="tel" value=""/>
+                    <b></b>
+                </span>
+
+                <span>
+                    <label>昵称：</label>
+                    <input id="nickname" class="upt" type="text" name="nickname" value=""/>
+                    <b></b>
+                </span>
+
+                <span>
+                    <label>真实姓名：</label>
+                    <input id="realname" class="upt" type="text" name="realname" value=""/>
+                    <b></b>
+                </span>
+                <input type="text" name="u_p" value="{{ user }}" style="display:none;">
+                <span>
+                    <label>性别：</label>
+                    <select name="sex" class="upt">
+                        <option value="m">男</option>
+                        <option value="f">女</option>
+                    </select>
+                </span>
+
+
+            </form>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+    <script>
+        $(function () {
+            $(".upt").focusout(function () {
+                if ($(this).val().length === 0){
+                    $(this).next().html("不可为空");
+                    $(this).next().css("color", "red")
+                }else{
+                    $(this).next().html("")
+                }
+            })
+            {#邮箱格式验证#}
+            $("#email").focusout(function () {
+                let test = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
+                if (test.test($(this).val())) {
+                    $(this).next().html("格式正确");
+                    $(this).next().css("color", "green");
+                    $("#reg").attr("disabled", false);
+                } else {
+                    $(this).next().html("格式错误");
+                    $(this).next().css("color", "red");
+                    $("#reg").attr("disabled", true);
+                }
+            });
+            {#图片显示#}
+            $("#photo").change(function () {
+                $("#show_photo").html("<img src=" + URL.createObjectURL($(this)[0].files[0]) + ">")
+            });
+
+            $("#reg").click(function(){
+                $("#myform").submit()
+            })
+        })
+
+
+    </script>

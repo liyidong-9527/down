@@ -1,0 +1,8 @@
+一、redis数据库
+二、celery分布式框架
+三、Django rastframwork
+四、vue
+五、github使用
+六、暂定
+七、linux系统
+八、项目部署

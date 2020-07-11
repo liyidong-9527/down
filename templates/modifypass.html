@@ -1,0 +1,97 @@
+{% extends "templates.html" %}
+{% block css_js %}
+<link rel="stylesheet" type="text/css" href="../static/css/index.css"/>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+{% endblock %}
+{% block title %}
+密码找回<
+{% endblock %}
+{% block main %}
+ <!-- 网站主体 -->
+    <div id="main">
+        <div class="upload">
+            <p>修改密码</p>
+            <hr />
+            <form action="/user/change_pwd" id="form" method="post">
+				<span>
+					<label>旧密码：</label>
+					<input class="upt" id="o_pwd" type="password" name="" value="" />
+                    <b></b>
+				</span>
+				<span>
+					<label>新密码：</label>
+					<input class="upt" id="new_pwd" type="password" name="password" value="" />
+					<b>密码长度为6-20位</b>
+				</span>
+				<span>
+					<label>确认密码：</label>
+					<input class="upt" id="a_sure" type="password" name="" value="" />
+					<b>两次输入的密码必须保持一致</b>
+				</span>
+
+                <span><label class="btn"><input type="button" disabled id="but" value="确认修改"  /></label></span>
+            </form>
+        </div>
+
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script>
+        $(function () {
+            let sign = {"o_pwd": 0, "new_pwd":0, "a_sure": 0};
+            {#验证旧密码是否正确#}
+            $("#o_pwd").focusout(function () {
+                let o_pwwd = $(this).val();
+                let tag = $(this);
+                $.ajax({
+                    url:"/user/check_pwd",
+                    data:{"o_pwd": o_pwwd},
+                    type:"post",
+                    success:function (msg) {
+                        msg = JSON.parse(msg);
+                        if (msg["status"] === 200){
+                            tag.next().css("color", "green").html("密码正确");
+                            sign["o_pwd"] = 1
+                        }else{
+                            tag.next().css("color", "red").html("密码错误");
+                            sign["o_pwd"] = 0
+                        }
+                    }
+
+                })
+            });
+            {#新密码格式校验#}
+            $("#new_pwd").focusout(function () {
+                if ($(this).val().length > 5 && $(this).val().length < 21){
+                    $(this).next().css("color", "green").html("格式正确");
+                    sign["new_pwd"] = 1
+                }else{
+                    $(this).next().css("color", "red").html("格式错误");
+                    sign["new_pwd"] = 0
+                }
+            });
+            {#密码一致性验证#}
+            $("#a_sure").focusout(function () {
+                if ($(this).val() === $("#new_pwd").val()){
+                    $(this).next().css("color", "green").html("密码一致");
+                    sign["a_sure"] = 1
+                } else{
+                    $(this).next().css("color", "red").html("密码不一致");
+                    sign["a_sure"] = 0
+                }
+            });
+            $(".upt").focusout(function () {
+                if (sign["o_pwd"] === 1 && sign["new_pwd"] === 1 && sign["a_sure"] === 1) {
+                    $("#but").attr("disabled", false)
+                }else{
+                    $("#but").attr("disabled", true)
+                }
+            })
+            $("#but").click(function () {
+                $("#form").submit()
+            })
+        })
+
+    </script>
+{% endblock %}

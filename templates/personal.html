@@ -1,0 +1,35 @@
+{% extends "templates.html" %}
+{% block css_js %}
+    <link rel="stylesheet" type="text/css" href="../static/css/index.css"/>
+	<script src="../static/js/jquery-3.2.1.min.js"></script>
+{% endblock %}
+{% block title %}
+论坛
+{% endblock %}
+{% block main %}
+ <!-- 网站主体 -->
+    <div id="main">
+        <div class="personal">
+			<div class="lf">
+				<img src="user/user/{{ user.id }}" alt="用户头像"/>
+			</div>
+
+			<div class="rf">
+				<div>
+					<span>{{ user.nickname }}</span>
+					<span>
+						<b>{{ user.realname }}</b> | <b>{{ user.sex }}</b> |  <b>1987-08-27</b>
+						<b><a href="user/modifypass">修改密码</a></b>
+					</span>
+				</div>
+
+				<div>
+					<span><b>{{ user.user_score }}</b>积分</span>
+					<span><b>0</b>关注</span>
+				</div>
+			</div>
+		</div>
+
+    </div>
+
+{% endblock %}
